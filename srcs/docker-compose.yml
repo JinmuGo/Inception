@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  mariadb:
+    build: 
+      context: ./requirements/mariadb
+      dockerfile: Dockerfile
+    
+  nginx:
+  wp_php:
