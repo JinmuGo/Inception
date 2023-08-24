@@ -1,23 +1,50 @@
 #!/bin/sh
 
-mkdir -p /run/mysqld
+mkdir -p /run/mysqld/ \
+&& chown -R mysql:mysql /run/mysqld/ \
+&& chmod 777 /run/mysqld/
 
-chown -R mysql:mysql /run/mysqld/
-chown -R mysql:mysql /var/lib/mysql
+echo "install db\n"
 
-mysql_install_db --user=mysql > /dev/null
+mysql_install_db
 
-sqltmpfile="dbtmp.sql"
-MYSQL_DATABASE=${MYSQL_DATABASE:-""}
-MYSQL_USER=${MYSQL_USER:-""}
-MYSQL_PASSWORD=${MYSQL_PASSWORD:-""}
+mariadbd --user=mysql &
 
-cat << delim > $sqltmpfile  #  mysql 사용자가 만듦.
-CREATE DATABASE wordpress_db;
-CREATE USER "$MYSQL_USER"@'localhost' IDENTIFIED BY "$MYSQL_PASSWORD";
+sleep 10
+
+sqlRoot="createRoot.sql"
+
+cat << delim > $sqlRoot  #  mysql 사용자가 만듦.
+ALTER USER 'root'@'localhost' IDENTIFIED BY '${MARIADB_ROOT_PASSWORD}';
 FLUSH PRIVILEGES;
 delim
 
-mysql --user=mysql < $sqltmpfile
+sqlNewDatabase="createDatabase.sql"
 
-exec mysqld --user=mysql
+cat << delim > $sqlNewDatabase
+CREATE DATABASE ${WORDPRESS_DB_NAME};
+FLUSH PRIVILEGES;
+delim
+
+sqlNewUser="createNewUser.sql"
+
+cat << delim > $sqlNewUser
+CREATE USER '${MARIADB_USER}'@'%' IDENTIFIED BY '${MARIADB_PASSWORD}';
+GRANT ALL PRIVILEGES ON ${WORDPRESS_DB_NAME}.* TO '${MARIADB_USER}'@'%';
+FLUSH PRIVILEGES;
+delim
+
+echo "create Root User\n"
+mariadb --user=root < $sqlRoot
+echo "create Database\n"
+mariadb --user=root -p"${MARIADB_ROOT_PASSWORD}" < $sqlNewDatabase
+echo "create Jgo \n"
+mariadb --user=root -p"${MARIADB_ROOT_PASSWORD}" < ${sqlNewUser}
+
+# rm -f ${sqlRoot} ${sqlNewDatabase} ${sqlNewUser}
+
+pkill mariadbd
+
+sleep 3
+
+exec mariadbd --datadir='/var/lib/mysql/' --user=mysql

@@ -2,10 +2,12 @@ version: '3.8'
 
 services:
   mariadb:
+    container_name: mariadb_app
     build: 
       context: .
       dockerfile: ./requirements/mariadb/Dockerfile
-
+    image: mariadb
+    
     env_file:
       - ./.env
     
@@ -15,5 +17,28 @@ services:
     ports:
       - 3306:3306
     
+    restart: always
+    
+  wp_php:
+    container_name: wp_php_app
+    image: wp_php
+
+    build: 
+      context: .
+      dockerfile: ./requirements/wordpress/Dockerfile
+
+    env_file:
+      - ./.env
+    
+    volumes:
+      - /home/admin/data/wordpress_data:/var/www/html 
+
+    depends_on:
+      - mariadb
+
+    restart: always
   # nginx:
-  # wp_php:
+    # container_name: nginx_app
+    # image: nginx
+    # depends_on:
+    #   - wp_php
