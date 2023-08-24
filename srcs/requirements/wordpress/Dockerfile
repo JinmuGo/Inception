@@ -25,10 +25,10 @@ RUN curl -O "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cl
     chmod +x wp-cli.phar && \
     mv wp-cli.phar /usr/local/bin/wp
 
-COPY ./requirements/wordpress/www.conf /etc/php81/php-fpm.d
+COPY ./conf/www.conf /etc/php81/php-fpm.d
 
 EXPOSE 9000
 
-COPY ./requirements/wordpress/docker-entrypoint.sh /app/
+COPY ./tools/docker-entrypoint.sh /app/
 
 ENTRYPOINT [ "/app/docker-entrypoint.sh" ]

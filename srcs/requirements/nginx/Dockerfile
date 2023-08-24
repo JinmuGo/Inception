@@ -12,7 +12,7 @@ RUN openssl req -x509 -nodes -days 365 \
     -keyout /etc/ssl/private/nginx-selfsigned.key \
     -out /etc/ssl/certs/nginx-selfsigned.crt;
 
-COPY ./requirements/nginx/default.conf /etc/nginx/http.d/
+COPY ./conf/default.conf /etc/nginx/http.d/
 
 EXPOSE 443
 

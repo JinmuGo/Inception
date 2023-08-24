@@ -4,8 +4,8 @@ services:
   mariadb:
     container_name: mariadb_app
     build: 
-      context: .
-      dockerfile: ./requirements/mariadb/Dockerfile
+      context: ./requirements/mariadb
+      dockerfile: ./Dockerfile
     image: mariadb
     
     env_file:
@@ -22,8 +22,8 @@ services:
   wp_php:
     container_name: wp_php_app
     build: 
-      context: .
-      dockerfile: ./requirements/wordpress/Dockerfile
+      context: ./requirements/wordpress
+      dockerfile: ./Dockerfile
     image: wp_php
 
     env_file:
@@ -42,8 +42,8 @@ services:
   nginx:
     container_name: nginx_app
     build:
-      context: .
-      dockerfile: ./requirements/nginx/Dockerfile
+      context: ./requirements/nginx
+      dockerfile: ./Dockerfile
     image: nginx
     
     env_file:

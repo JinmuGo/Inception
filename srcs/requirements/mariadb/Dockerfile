@@ -2,9 +2,9 @@ FROM alpine:3.17
 
 WORKDIR /app
 
-COPY ./requirements/mariadb/cnf/my.cnf /etc/
+COPY ./conf/my.cnf /etc/
 
-COPY ./requirements/mariadb/docker-entrypoint.sh .
+COPY ./tools/docker-entrypoint.sh .
 
 RUN apk -U upgrade && \
     apk add --no-cache \
