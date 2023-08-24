@@ -6,7 +6,7 @@ mkdir -p /run/mysqld/ \
 
 echo "install db\n"
 
-mysql_install_db
+mysql_install_db --user=mysql
 
 mariadbd --user=mysql &
 
