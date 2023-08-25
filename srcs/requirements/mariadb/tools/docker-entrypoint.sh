@@ -14,7 +14,7 @@ sleep 10
 
 sqlRoot="createRoot.sql"
 
-cat << delim > $sqlRoot  #  mysql 사용자가 만듦.
+cat << delim > $sqlRoot
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${MARIADB_ROOT_PASSWORD}';
 FLUSH PRIVILEGES;
 delim
@@ -41,7 +41,7 @@ mariadb --user=root -p"${MARIADB_ROOT_PASSWORD}" < $sqlNewDatabase
 echo "create Jgo \n"
 mariadb --user=root -p"${MARIADB_ROOT_PASSWORD}" < ${sqlNewUser}
 
-# rm -f ${sqlRoot} ${sqlNewDatabase} ${sqlNewUser}
+rm -f ${sqlRoot} ${sqlNewDatabase} ${sqlNewUser}
 
 pkill mariadbd
 

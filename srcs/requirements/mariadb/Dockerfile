@@ -10,8 +10,7 @@ RUN apk -U upgrade && \
     apk add --no-cache \
     mariadb \
     mariadb-client \
-    dumb-init && \
-    rm -f /var/cache/apk/*
+    dumb-init
 
 EXPOSE 3306
 
