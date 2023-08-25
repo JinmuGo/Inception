@@ -14,6 +14,7 @@ RUN apk -U upgrade && \
     php81-phar \
     php81-mbstring \
     php81-iconv \
+    php81-tokenizer \
     mariadb-client
 
 RUN adduser -u 82 -DSG www-data www-data

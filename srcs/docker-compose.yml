@@ -64,6 +64,26 @@ services:
     depends_on:
       - wp_php
       - mariadb
+  
+  redis:
+    container_name: redis_app
+    build: 
+      context: ./requirements/bonus/redis
+      dockerfile: ./Dockerfile
+    image: redis
+    pull_policy: never
+
+    env_file:
+      - ./.env
+
+    networks:
+      - inception_network
+
+    volumes:
+      - /data
+
+    depends_on:
+      - wp_php
 
 volumes:
   mariadb_data:
