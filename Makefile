@@ -10,16 +10,17 @@
 #                                                                              #
 # **************************************************************************** #
 
-MARIADB_DATA_DIR 	:= /home/admin/data/mariadb_data
-WORDPRESS_DATA_DIR 	:= /home/admin/data/wordpress_data
+DATA_DIR := /home/$(shell whoami)/data
+MARIADB_DATA_DIR := $(DATA_DIR)/mariadb_data
+WORDPRESS_DATA_DIR := $(DATA_DIR)/wordpress_data
 
-all:
+all: $(DATA_DIR) $(MARIADB_DATA_DIR) $(WORDPRESS_DATA_DIR)
 	docker-compose -f ./srcs/docker-compose.yml up -d --build
 
 clean:
 	docker-compose -f ./srcs/docker-compose.yml down
 
-fclean:
+fclean: clean
 	docker-compose -f ./srcs/docker-compose.yml down -v
 	sudo rm -rf $(MARIADB_DATA_DIR)/* $(WORDPRESS_DATA_DIR)/*
 	docker image rm $(shell docker images -q)
@@ -27,4 +28,7 @@ fclean:
 re: fclean
 	$(MAKE) all
 
-.PHONY: all clean fclean re bonus
+$(DATA_DIR) $(MARIADB_DATA_DIR) $(WORDPRESS_DATA_DIR):
+	mkdir -p $@
+
+.PHONY: all clean fclean re $(DATA_DIR) $(MARIADB_DATA_DIR) $(WORDPRESS_DATA_DIR)
