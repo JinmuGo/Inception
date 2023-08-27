@@ -1,15 +1,14 @@
 {
-  "name": "kinetic2",
+  "name": "kinetictypo",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "type": "module",
   "keywords": [],
-  "author": "",
+  "author": "jgo",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2"
