@@ -64,7 +64,9 @@ services:
     depends_on:
       - wp_php
       - mariadb
-  
+
+    restart: always
+
   redis:
     container_name: redis_app
     build: 
@@ -84,6 +86,36 @@ services:
 
     depends_on:
       - wp_php
+
+    restart: always
+
+  ftp_server:
+    container_name: ftp_server_app
+    build: 
+      context: ./requirements/bonus/ftp_server
+      dockerfile: ./Dockerfile
+      args:
+        FTP_USER: ${FTP_USER}
+        FTP_PASSWORD: ${FTP_PASSWORD}
+    image: ftp-server
+    pull_policy: never
+
+    env_file:
+      - ./.env
+
+    ports:
+      - 21:21
+      - 20:20
+    
+    networks:
+      - inception_network
+
+    volumes:
+      - wordpress_data:/home/vsftpd/${FTP_USER}
+    
+    depends_on:
+      - wp_php
+      - redis
 
 volumes:
   mariadb_data:
