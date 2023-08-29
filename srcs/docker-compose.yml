@@ -149,24 +149,6 @@ services:
       - mariadb
 
     restart: on-failure 
-  
-  prometheus:
-    container_name: prometheus_app
-    build:
-      context: ./requirements/bonus/prometheus
-      dockerfile: ./Dockerfile
-    image: prometheus
-    pull_policy: never
-
-    ports:
-      - 9090:9090
-    
-    networks:
-      - docker_network 
-
-    depends_on:
-      - cadvisor
-    restart: on-failure 
 
   cadvisor:
     container_name: cadvisor_app
@@ -190,32 +172,7 @@ services:
       - /dev/disk/:/dev/disk:ro
 
     restart: on-failure 
-  grafana:
-    container_name: grafana_app
-    build:
-      context: ./requirements/bonus/grafana
-      dockerfile: ./Dockerfile
-      args:
-        GRA_USER: ${GRA_USER}
-        GRA_PASSWORD: ${GRA_PASSWORD}
-    image: grafana
-    pull_policy: never
 
-    ports:
-      - 4242:4242
-
-    env_file:
-      - ./.env
-    
-    networks:
-      - docker_network 
-
-    volumes:
-      - grafana_data:/usr/share/grafana
-
-    depends_on:
-      - prometheus
-    # restart: on-failure 
 volumes:
   mariadb_data:
     driver: local
@@ -231,20 +188,6 @@ volumes:
       device: /home/${USER}/data/wordpress_data
       o: bind
   
-  prometheus_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/${USER}/data/prometheus_data
-      o: bind
-    
-  grafana_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/${USER}/data/grafana_data
-      o: bind
-
 networks:
   docker_network:
     driver: bridge
