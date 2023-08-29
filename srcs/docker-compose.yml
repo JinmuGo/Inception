@@ -13,12 +13,12 @@ services:
       - ./.env
     
     networks:
-      - inception_network
+      - docker_network 
     
     volumes:
       - mariadb_data:/var/lib/mysql
     
-    restart: always
+    restart: on-failure 
     
   wp_php:
     container_name: wp_php_app
@@ -32,7 +32,7 @@ services:
       - ./.env
 
     networks:
-      - inception_network
+      - docker_network 
     
     volumes:
       - wordpress_data:/var/www/html 
@@ -40,7 +40,7 @@ services:
     depends_on:
       - mariadb
 
-    restart: always
+    restart: on-failure 
   nginx:
     container_name: nginx_app
     build:
@@ -56,16 +56,16 @@ services:
       - 443:443
     
     networks:
-      - inception_network
+      - docker_network 
     
     volumes:
       - wordpress_data:/var/www/html
 
     depends_on:
-      - wp_php
       - mariadb
+      - wp_php
 
-    restart: always
+    restart: on-failure 
 
   redis:
     container_name: redis_app
@@ -79,7 +79,7 @@ services:
       - ./.env
 
     networks:
-      - inception_network
+      - docker_network 
 
     volumes:
       - /data
@@ -87,7 +87,7 @@ services:
     depends_on:
       - wp_php
 
-    restart: always
+    restart: on-failure 
 
   ftp_server:
     container_name: ftp_server_app
@@ -108,16 +108,17 @@ services:
       - 20:20
     
     networks:
-      - inception_network
+      - docker_network 
 
     volumes:
       - wordpress_data:/home/vsftpd/${FTP_USER}
     
     depends_on:
+      - mariadb
       - wp_php
       - redis
 
-    restart: always
+    restart: on-failure 
   website:
     container_name: website_app
     build: 
@@ -129,9 +130,9 @@ services:
     ports:
       - 3000:3000
 
-    restart: always  
+    restart:  on-failure  
   adminer:
-    container_name: adminer
+    container_name: adminer_app
     build:
      context: ./requirements/bonus/adminer
      dockerfile: ./Dockerfile
@@ -142,12 +143,79 @@ services:
       - 8000:80
     
     networks:
-      - inception_network
+      - docker_network 
     
     depends_on:
       - mariadb
 
-    restart: always    
+    restart: on-failure 
+  
+  prometheus:
+    container_name: prometheus_app
+    build:
+      context: ./requirements/bonus/prometheus
+      dockerfile: ./Dockerfile
+    image: prometheus
+    pull_policy: never
+
+    ports:
+      - 9090:9090
+    
+    networks:
+      - docker_network 
+
+    depends_on:
+      - cadvisor
+    restart: on-failure 
+
+  cadvisor:
+    container_name: cadvisor_app
+    build:
+      context: ./requirements/bonus/cadvisor
+      dockerfile: ./Dockerfile
+    image: cadvisor
+    pull_policy: never
+
+    ports:
+      - 8080:8080
+
+    networks:
+      - docker_network 
+
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+
+    restart: on-failure 
+  grafana:
+    container_name: grafana_app
+    build:
+      context: ./requirements/bonus/grafana
+      dockerfile: ./Dockerfile
+      args:
+        GRA_USER: ${GRA_USER}
+        GRA_PASSWORD: ${GRA_PASSWORD}
+    image: grafana
+    pull_policy: never
+
+    ports:
+      - 4242:4242
+
+    env_file:
+      - ./.env
+    
+    networks:
+      - docker_network 
+
+    volumes:
+      - grafana_data:/usr/share/grafana
+
+    depends_on:
+      - prometheus
+    # restart: on-failure 
 volumes:
   mariadb_data:
     driver: local
@@ -155,13 +223,28 @@ volumes:
       type: none
       device: /home/${USER}/data/mariadb_data
       o: bind
+
   wordpress_data:
     driver: local
     driver_opts:
       type: none
       device: /home/${USER}/data/wordpress_data
       o: bind
+  
+  prometheus_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/${USER}/data/prometheus_data
+      o: bind
+    
+  grafana_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/${USER}/data/grafana_data
+      o: bind
 
 networks:
-  inception_network:
+  docker_network:
     driver: bridge
