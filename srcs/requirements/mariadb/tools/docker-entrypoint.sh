@@ -30,7 +30,9 @@ sqlNewUser="createNewUser.sql"
 
 cat << delim > $sqlNewUser
 CREATE USER '${MARIADB_USER}'@'%' IDENTIFIED BY '${MARIADB_PASSWORD}';
+CREATE USER '${MARIADB_USER}'@'localhost' IDENTIFIED BY '${MARIADB_PASSWORD}';
 GRANT ALL PRIVILEGES ON ${WORDPRESS_DB_NAME}.* TO '${MARIADB_USER}'@'%';
+GRANT ALL PRIVILEGES ON ${WORDPRESS_DB_NAME}.* TO '${MARIADB_USER}'@'localhost';
 FLUSH PRIVILEGES;
 delim
 
@@ -39,11 +41,12 @@ mariadb --user=root < $sqlRoot
 echo "create Database\n"
 mariadb --user=root -p"${MARIADB_ROOT_PASSWORD}" < $sqlNewDatabase
 echo "create Jgo \n"
-mariadb --user=root -p"${MARIADB_ROOT_PASSWORD}" < ${sqlNewUser}
+mariadb --user=root -p"${MARIADB_ROOT_PASSWORD}" < $sqlNewUser
 
-rm -f ${sqlRoot} ${sqlNewDatabase} ${sqlNewUser}
+# keep that files
+# rm -f $sqlRoot $sqlNewDatabase $sqlNewUser
 
-pkill mariadbd
+mysqladmin -uroot -p${MARIADB_ROOT_PASSWORD} shutdown
 
 sleep 3
 

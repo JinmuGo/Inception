@@ -14,7 +14,10 @@ DATA_DIR := /home/$(shell whoami)/data
 MARIADB_DATA_DIR := $(DATA_DIR)/mariadb_data
 WORDPRESS_DATA_DIR := $(DATA_DIR)/wordpress_data
 
-all: $(DATA_DIR) $(MARIADB_DATA_DIR) $(WORDPRESS_DATA_DIR)
+mandatory: $(DATA_DIR) $(MARIADB_DATA_DIR) $(WORDPRESS_DATA_DIR)
+	docker-compose -f ./srcs/docker-compose.yml up mariadb wp_php nginx -d --build
+
+bonus all: $(DATA_DIR) $(MARIADB_DATA_DIR) $(WORDPRESS_DATA_DIR)
 	docker-compose -f ./srcs/docker-compose.yml up -d --build
 
 clean:

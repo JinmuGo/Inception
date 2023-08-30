@@ -13,7 +13,7 @@ services:
       - ./.env
     
     networks:
-      - docker_network 
+      - docker-network 
     
     volumes:
       - mariadb_data:/var/lib/mysql
@@ -32,7 +32,7 @@ services:
       - ./.env
 
     networks:
-      - docker_network 
+      - docker-network 
     
     volumes:
       - wordpress_data:/var/www/html 
@@ -56,7 +56,7 @@ services:
       - 443:443
     
     networks:
-      - docker_network 
+      - docker-network 
     
     volumes:
       - wordpress_data:/var/www/html
@@ -79,7 +79,7 @@ services:
       - ./.env
 
     networks:
-      - docker_network 
+      - docker-network 
 
     volumes:
       - /data
@@ -88,7 +88,6 @@ services:
       - wp_php
 
     restart: on-failure 
-
   ftp_server:
     container_name: ftp_server_app
     build: 
@@ -108,7 +107,7 @@ services:
       - 20:20
     
     networks:
-      - docker_network 
+      - docker-network 
 
     volumes:
       - wordpress_data:/home/vsftpd/${FTP_USER}
@@ -143,13 +142,12 @@ services:
       - 8000:80
     
     networks:
-      - docker_network 
+      - docker-network 
     
     depends_on:
       - mariadb
 
     restart: on-failure 
-
   cadvisor:
     container_name: cadvisor_app
     build:
@@ -162,7 +160,7 @@ services:
       - 8080:8080
 
     networks:
-      - docker_network 
+      - docker-network 
 
     volumes:
       - /:/rootfs:ro
@@ -189,5 +187,6 @@ volumes:
       o: bind
   
 networks:
-  docker_network:
+  docker-network:
+    name: docker-network
     driver: bridge
