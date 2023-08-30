@@ -26,7 +26,10 @@ clean:
 fclean: clean
 	docker-compose -f ./srcs/docker-compose.yml down -v
 	sudo rm -rf $(MARIADB_DATA_DIR)/* $(WORDPRESS_DATA_DIR)/*
-	docker image rm $(shell docker images -q)
+	docker image prune -f
+	docker builder prune -f
+	docker volume prune -f
+	docker network prune -f
 
 re: fclean
 	$(MAKE) all
