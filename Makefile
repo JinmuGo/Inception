@@ -15,16 +15,16 @@ MARIADB_DATA_DIR := $(DATA_DIR)/mariadb_data
 WORDPRESS_DATA_DIR := $(DATA_DIR)/wordpress_data
 
 mandatory: $(DATA_DIR) $(MARIADB_DATA_DIR) $(WORDPRESS_DATA_DIR)
-	docker-compose -f ./srcs/docker-compose.yml up mariadb wp_php nginx -d --build
+	docker compose -f ./srcs/docker-compose.yml up mariadb wp_php nginx -d --build
 
 bonus all: $(DATA_DIR) $(MARIADB_DATA_DIR) $(WORDPRESS_DATA_DIR)
-	docker-compose -f ./srcs/docker-compose.yml up -d --build
+	docker compose -f ./srcs/docker-compose.yml up -d --build
 
 clean:
-	docker-compose -f ./srcs/docker-compose.yml down
+	docker compose -f ./srcs/docker-compose.yml down
 
 fclean: clean
-	docker-compose -f ./srcs/docker-compose.yml down -v
+	docker compose -f ./srcs/docker-compose.yml down -v
 	sudo rm -rf $(MARIADB_DATA_DIR)/* $(WORDPRESS_DATA_DIR)/*
 	docker image prune -f
 	docker builder prune -f
