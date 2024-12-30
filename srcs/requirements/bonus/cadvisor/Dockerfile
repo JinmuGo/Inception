@@ -1,4 +1,4 @@
-FROM alpine:3.17
+FROM alpine:3.20
 
 RUN apk update && apk add libc6-compat wget
 RUN mkdir -p /usr/local/bin \

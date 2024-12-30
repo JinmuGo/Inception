@@ -1,6 +1,6 @@
 # https://redis.io/docs/management/config/
 
-FROM alpine:3.17
+FROM alpine:3.20
 
 RUN addgroup -S -g 1000 redis && adduser -S -G redis -u 999 redis
 
