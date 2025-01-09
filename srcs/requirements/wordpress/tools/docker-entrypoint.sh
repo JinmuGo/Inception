@@ -16,6 +16,4 @@ wp config set WP_CACHE true
 
 # wp redis enable  # for bonus
 
-chown -R www-data:www-data /var/www/html
-
-exec php-fpm81 -F -R
+exec php-fpm82 -F -R

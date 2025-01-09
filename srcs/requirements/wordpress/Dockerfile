@@ -1,4 +1,4 @@
-FROM alpine:3.17
+FROM alpine:3.20
 
 WORKDIR /var/www/html
 
@@ -7,14 +7,14 @@ RUN apk -U upgrade && \
     apk add --no-cache \
     bash \
     curl \
-    php81 \
-    php81-fpm \
-    php81-mysqli \
-    php81-cli \
-    php81-phar \
-    php81-mbstring \
-    php81-iconv \
-    php81-tokenizer \
+    php82 \
+    php82-fpm \
+    php82-mysqli \
+    php82-cli \
+    php82-phar \
+    php82-mbstring \
+    php82-iconv \
+    php82-tokenizer \
     mariadb-client
 
 RUN adduser -u 82 -DSG www-data www-data
@@ -26,7 +26,9 @@ RUN curl -O "https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cl
     chmod +x wp-cli.phar && \
     mv wp-cli.phar /usr/local/bin/wp
 
-COPY ./conf/www.conf /etc/php81/php-fpm.d
+COPY ./conf/www.conf /etc/php82/php-fpm.d
+
+RUN ln -s /usr/bin/php82 /usr/bin/php
 
 EXPOSE 9000
 
